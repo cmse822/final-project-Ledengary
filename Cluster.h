@@ -7,4 +7,26 @@ class Cluster{
         int number_of_points; 
         double x_coordinate_total;
         double y_coordinate_total;
+    public:
+        Cluster(double x_coordinate,double y_coordinate){
+            number_of_points = 0;
+            this->x_coordinate = x_coordinate;
+            this->y_coordinate = y_coordinate;
+            x_coordinate_total = 0;
+            y_coordinate_total = 0;
+        }
+        Cluster(){
+            number_of_points = 0;
+            this->x_coordinate = 0;
+            this->y_coordinate = 0;
+            x_coordinate_total = 0;
+            y_coordinate_total = 0;
+        }
+        double get_x(){ return this->x_coordinate; }
+        double get_y(){ return this->y_coordinate; }
+        void delete_values(){
+            this->number_of_points = 0;
+            this->x_coordinate_total = 0;
+            this->y_coordinate_total = 0;
+        }
 };

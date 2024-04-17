@@ -1,4 +1,6 @@
 #include "Dot.h"
+#include <omp.h>
+#include <queue>
 
 class Cluster{
     private:
@@ -28,5 +30,13 @@ class Cluster{
             this->number_of_points = 0;
             this->x_coordinate_total = 0;
             this->y_coordinate_total = 0;
+        }
+        bool update_values(){
+            if(this->x_coordinate == x_coordinate_total / this->number_of_points && this->y_coordinate == y_coordinate_total / this->number_of_points){
+                return false;
+            }
+            this->x_coordinate = x_coordinate_total/this->number_of_points;
+            this->y_coordinate = y_coordinate_total/this->number_of_points;
+            return true;
         }
 };

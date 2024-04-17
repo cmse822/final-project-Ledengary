@@ -26,6 +26,14 @@ class Cluster{
         }
         double get_x(){ return this->x_coordinate; }
         double get_y(){ return this->y_coordinate; }
+        void add_point(Point pt) {
+            #pragma omp atomic update
+                    number_of_points++;
+            #pragma atomic update
+                    x_coordinate_total += pt.get_x();
+            #pragma omp atomic update
+                    y_coordinate_total += pt.get_y();
+        }
         void delete_values(){
             this->number_of_points = 0;
             this->x_coordinate_total = 0;

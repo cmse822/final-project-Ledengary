@@ -8,8 +8,8 @@
 using namespace std;
 
 
-int number_of_points = 500000;
-int  number_of_clusters = 1000;
+int number_of_points = 500;
+int  number_of_clusters = 10;
 
 vector<Dot> create_point(int number_of_points);
 vector<Cluster> create_cluster(int number_of_clusters);

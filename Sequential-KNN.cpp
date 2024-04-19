@@ -3,17 +3,17 @@
 #include <cmath>
 #include <omp.h>
 #include "Dot.h"
-#include "Cluster.h"
+#include "knn-functions.h"
 #include "fstream"
 using namespace std;
 
-int number_of_dots = 500;
-int  number_of_clusters = 10;
-int iterations = 20;
+int number_of_dots = 50000;
+int  number_of_clusters = 100;
+int iterations = 40;
 double max_value = 100000;
 
-vector<Dot> create_dot(int number_of_dots);
-vector<Cluster> create_cluster(int number_of_clusters);
+vector<Dot> create_dot(int number_of_dots, int max_value);
+vector<Cluster> create_cluster(int number_of_clusters, int max_value);
 void plot(vector<Dot> &dots);
 void find_distance(vector<Dot> &pts, vector<Cluster> &cls);
 bool update_clusters(vector<Cluster> &cls);
@@ -28,11 +28,11 @@ int main() {
     printf("Initialization \n");
 
     printf("Creation of the dots \n");
-    vector<Dot> pts = create_dot(number_of_dots);
+    vector<Dot> pts = create_dot(number_of_dots, max_value);
     printf("dots Created \n");
 
     printf("Creations of the Clusters \n");
-    vector<Cluster> cls = create_cluster(number_of_clusters);
+    vector<Cluster> cls = create_cluster(number_of_clusters, max_value);
     printf("Clusters Created \n");
 
     double end_time1 = omp_get_wtime();
@@ -61,15 +61,6 @@ int main() {
     return 0;
 }
 
-void plot(vector<Dot> &dots){
-    ofstream Myfile("data.txt");
-    Myfile << "x,y,cluster_id"<< endl ;
-    for(int i = 0; i < dots.size(); i++){
-        Dot point = dots[i];
-        Myfile << point.get_x() << "," << point.get_y() << "," << point.get_cluster_id() << endl;
-    }
-    Myfile.close();
-}
 
 void find_distance(vector<Dot>&pts,vector<Cluster>&cls){
         unsigned long pts_size = pts.size();
@@ -94,38 +85,3 @@ void find_distance(vector<Dot>&pts,vector<Cluster>&cls){
         cls[min_index].add_point(pts[i]);
     }
  }
-
-double euclidean_dist(Dot pt, Cluster cl){
-    double dist =sqrt(pow(pt.get_x() - cl.get_x(),2) +
-                      pow(pt.get_y() - cl.get_y(), 2));
-    return dist;
-}
-
-bool update_clusters(vector<Cluster>&cls) {
-    bool  iterate = false;
-    for (int i = 0; i < cls.size(); i++) {
-        iterate = cls[i].update_values();
-        cls[i].delete_values();
-    }
-    return iterate;
-}
-
-vector<Dot> create_dot(int num_pt){
-    vector<Dot>pts(num_pt);
-    Dot *ptr = &pts[0];
-    for (int i = 0; i <num_pt; i++) {
-        Dot* point = new  Dot(rand() % (int) max_value, rand() % (int) max_value);
-        ptr[i]= *point;
-    }
-    return pts;
-}
-
-vector<Cluster> create_cluster(int num_cl){
-    vector<Cluster>cls(num_cl);
-     Cluster* ptr = &cls[0];
-    for (int i = 0; i <num_cl; i++) {
-        Cluster* cluster = new  Cluster(rand() % (int) max_value, rand() % (int) max_value);
-        ptr[i] = *cluster;
-    }
-    return cls;
-}

@@ -42,6 +42,12 @@ int main() {
 
     while(iteration_num < iterations && iterate){
         iteration_num ++;
+        double cluster_start_time = omp_get_wtime();
+        // Updating of clusters centroids
+        printf("Iteration %d \n",iteration_num);
+        double cluster_end_time = omp_get_wtime();
+        auto cluster_duration = cluster_end_time - cluster_start_time;
+        printf("Clusters Update made in: %f seconds\n",cluster_duration);
     }
     double end_time2 = omp_get_wtime();
     duration = end_time2 - end_time1;

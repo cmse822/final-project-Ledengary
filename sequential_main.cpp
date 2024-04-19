@@ -7,10 +7,10 @@
 #include "fstream"
 using namespace std;
 
-
 int number_of_dots = 500;
 int  number_of_clusters = 10;
 int iterations = 20;
+double max_value = 100000;
 
 vector<Dot> create_point(int number_of_dots);
 vector<Cluster> create_cluster(int number_of_clusters);
@@ -47,7 +47,6 @@ int main() {
         iteration_num ++;
         find_distance(pts,cls);
         double cluster_start_time = omp_get_wtime();
-        // Updating of clusters centroids
         iterate = update_clusters(cls);
         printf("Iteration %d \n",iteration_num);
         double cluster_end_time = omp_get_wtime();
@@ -100,4 +99,33 @@ double euclidean_dist(Dot pt, Cluster cl){
     double dist =sqrt(pow(pt.get_x() - cl.get_x(),2) +
                       pow(pt.get_y() - cl.get_y(), 2));
     return dist;
+}
+
+bool update_clusters(vector<Cluster>&cls) {
+    bool  iterate = false;
+    for (int i = 0; i < cls.size(); i++) {
+        iterate = cls[i].update_values();
+        cls[i].delete_values();
+    }
+    return iterate;
+}
+
+vector<Dot> create_dot(int num_pt){
+    vector<Dot>pts(num_pt);
+    Dot *ptr = &pts[0];
+    for (int i = 0; i <num_pt; i++) {
+        Dot* point = new  Dot(rand() % (int) max_value, rand() % (int) max_value);
+        ptr[i]= *point;
+    }
+    return pts;
+}
+
+vector<Cluster> create_cluster(int num_cl){
+    vector<Cluster>cls(num_cl);
+     Cluster* ptr = &cls[0];
+    for (int i = 0; i <num_cl; i++) {
+        Cluster* cluster = new  Cluster(rand() % (int) max_value, rand() % (int) max_value);
+        ptr[i] = *cluster;
+    }
+    return cls;
 }

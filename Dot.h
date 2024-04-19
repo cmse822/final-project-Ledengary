@@ -1,3 +1,6 @@
+#ifndef POINT_H
+#define POINT_H
+
 class Dot{
     private:
         double x_coordinate; 
@@ -15,3 +18,5 @@ class Dot{
         void set_id(int id){ this->cluster_id = id; }
         int get_cluster_id(){ return cluster_id; }
 };
+
+#endif

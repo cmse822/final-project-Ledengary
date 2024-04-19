@@ -12,7 +12,7 @@ int  number_of_clusters = 10;
 int iterations = 20;
 double max_value = 100000;
 
-vector<Dot> create_point(int number_of_dots);
+vector<Dot> create_dot(int number_of_dots);
 vector<Cluster> create_cluster(int number_of_clusters);
 void plot(vector<Dot> &dots);
 void find_distance(vector<Dot> &pts, vector<Cluster> &cls);
@@ -28,7 +28,7 @@ int main() {
     printf("Initialization \n");
 
     printf("Creation of the dots \n");
-    vector<Dot> pts = create_point(number_of_dots);
+    vector<Dot> pts = create_dot(number_of_dots);
     printf("dots Created \n");
 
     printf("Creations of the Clusters \n");

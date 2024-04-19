@@ -3,14 +3,15 @@
 #include <cmath>
 #include <omp.h>
 #include "Dot.h"
-#include "knn-functions.h"
+#include "km-functions.h"
 #include "fstream"
 using namespace std;
 
 int number_of_dots = 50000;
 int  number_of_clusters = 100;
-int iterations = 40;
-double max_value = 100000;
+int iterations = 100;
+double max_value = 1000000;
+string input_filename = "MPI_clusters.txt";
 string filename = "sequential_clusters.txt";
 
 vector<Dot> create_dot(int number_of_dots, int max_value);
@@ -29,7 +30,8 @@ int main() {
     printf("Initialization \n");
 
     printf("Creation of the dots \n");
-    vector<Dot> pts = create_dot(number_of_dots, max_value);
+    // vector<Dot> pts = create_dot(number_of_dots, max_value);
+    vector<Dot> pts = read_dots_from_file(input_filename);
     printf("dots Created \n");
 
     printf("Creations of the Clusters \n");
@@ -44,7 +46,7 @@ int main() {
     bool iterate = true;
     printf("-STARTING ITERATE-\n");
 
-    while(iteration_num < iterations && iterate){
+    while(iteration_num < iterations){
         iteration_num ++;
         find_distance(pts,cls);
         double cluster_start_time = omp_get_wtime();
@@ -86,3 +88,7 @@ void find_distance(vector<Dot>&pts,vector<Cluster>&cls){
         cls[min_index].add_point(pts[i]);
     }
  }
+
+// RUN WITH THE FOLLOWING 
+// clang++ -fopenmp -o sequential_km Sequential-KM.cpp -L/opt/homebrew/opt/llvm/lib -I/opt/homebrew/opt/llvm/include -Wl,-rpath,/opt/homebrew/opt/llvm/lib
+// ./sequential_km

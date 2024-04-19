@@ -9,6 +9,7 @@
 #include <omp.h>
 #include "Dot.h"
 #include "fstream"
+#include <sstream>
 using namespace std;
 
 
@@ -55,6 +56,29 @@ vector<Cluster> create_cluster(int num_cl, int max_value){
         ptr[i] = *cluster;
     }
     return cls;
+}
+
+vector<Dot> read_dots_from_file(const string& filename) {
+    vector<Dot> dots;
+    ifstream infile(filename);
+    string line;
+    int threshold = 1;
+    getline(infile, line); // Skip the header
+
+    while (getline(infile, line)) {
+        stringstream ss(line);
+        double x, y;
+        int cluster_id;
+        char delim;
+
+        ss >> x >> delim >> y >> delim >> cluster_id;
+        int xx = (int)(x * threshold);
+        int yy = (int)(y * threshold);
+        Dot dot(xx, yy);
+        dots.push_back(dot);
+    }
+
+    return dots;
 }
 
 #endif // KNN_FUNCTIONS_H

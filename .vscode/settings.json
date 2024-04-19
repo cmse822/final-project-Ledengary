@@ -1,6 +1,8 @@
 {
     "files.associations": {
         "iosfwd": "cpp",
-        "vector": "cpp"
+        "vector": "cpp",
+        "mpi-cluster.h": "c",
+        "math.h": "c"
     }
 }

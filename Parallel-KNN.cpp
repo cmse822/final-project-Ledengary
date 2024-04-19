@@ -3,22 +3,23 @@
 #include <cmath>
 #include <omp.h>
 #include <fstream>
+#include "knn-functions.h"
 #include "Dot.h"
-#include "Cluster.h"
 using namespace std;
 
-int number_of_dots = 500;
-int  number_of_clusters = 10;
-int iterations = 20;
+int number_of_dots = 50000;
+int  number_of_clusters = 100;
+int iterations = 40;
 double max_value = 100000;
 int number_of_threads = 10;
+string filename = "parallel_clusters.txt";
 
-vector<Dot> create_point(int number_of_dots, int max_value);
+vector<Dot> create_dot(int number_of_dots, int max_value);
 vector<Cluster> create_cluster(int number_of_clusters, int max_value);
 void find_distance(vector<Dot> &pts, vector<Cluster> &cls);
 double euclidean_dist(Dot pt, Cluster cl);
 bool update_clusters(vector<Cluster> &cls);
-void plot(vector<Dot> &points);
+void plot(vector<Dot> &points, string filename);
 
 
 int main() {
@@ -31,7 +32,7 @@ int main() {
     printf("Initialization \n");
 
     printf("Creation of the Points \n");
-    vector<Dot> pts = create_point(number_of_dots, max_value);
+    vector<Dot> pts = create_dot(number_of_dots, max_value);
     printf("Points Created \n");
 
     printf("Creations of the Clusters \n");
@@ -56,14 +57,13 @@ int main() {
         double cluster_end_time = omp_get_wtime();
         auto cluster_duration = cluster_end_time - cluster_start_time;
         printf("Clusters Update made in: %f seconds\n",cluster_duration);
-
     }
     double end_time2 = omp_get_wtime();
     duration = end_time2 - end_time1;
     printf("Number of iterarions %d, total time %f seconds, iteration time avg %f seconds \n",
            iteration_num,duration, duration/iteration_num);
     printf("Storing the points coordinates and cluster-id...\n");
-    plot(pts);
+    plot(pts, filename);
     return 0;
 }
 
@@ -95,3 +95,7 @@ void find_distance(vector<Dot>&pts,vector<Cluster>&cls){
         }
     }
 }
+
+// RUN WITH THE FOLLOWING
+// clang++ -fopenmp -o parallel_knn Parallel-KNN.cpp -L/opt/homebrew/opt/llvm/lib -I/opt/homebrew/opt/llvm/include -Wl,-rpath,/opt/homebrew/opt/llvm/lib
+// ./parallel_knn

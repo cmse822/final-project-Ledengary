@@ -12,8 +12,8 @@
 using namespace std;
 
 
-void plot(vector<Dot> &dots){
-    ofstream Myfile("data.txt");
+void plot(vector<Dot> &dots, string filename){
+    ofstream Myfile(filename);
     Myfile << "x,y,cluster_id"<< endl ;
     for(int i = 0; i < dots.size(); i++){
         Dot point = dots[i];

@@ -11,10 +11,11 @@ int number_of_dots = 50000;
 int  number_of_clusters = 100;
 int iterations = 40;
 double max_value = 100000;
+string filename = "sequential_clusters.txt";
 
 vector<Dot> create_dot(int number_of_dots, int max_value);
 vector<Cluster> create_cluster(int number_of_clusters, int max_value);
-void plot(vector<Dot> &dots);
+void plot(vector<Dot> &dots, string filename);
 void find_distance(vector<Dot> &pts, vector<Cluster> &cls);
 bool update_clusters(vector<Cluster> &cls);
 double euclidean_dist(Dot pt, Cluster cl);
@@ -57,7 +58,7 @@ int main() {
     duration = end_time2 - end_time1;
     printf("Number of iterarions %d, total time %f seconds, iteration time avg %f seconds \n", iteration_num,duration, duration/iteration_num);
     printf("Storing the dots coordinates and cluster-id...\n");
-    plot(pts);
+    plot(pts, filename);
     return 0;
 }
 

@@ -40,7 +40,9 @@ int main() {
 
     double end_time1 = omp_get_wtime();
     auto duration = end_time1 - start_time;
+    ofstream logFile("outputs/method_comparison/sequential_" + to_string(number_of_dots) + "_" + to_string(number_of_clusters) + "_" + to_string(iterations) + ".txt");
     printf("Initialization made in: %f seconds\n",duration);
+    logFile << "Initialization time: " << duration << " seconds" << endl;
 
     int iteration_num = 0;
     bool iterate = true;
@@ -55,12 +57,16 @@ int main() {
         double cluster_end_time = omp_get_wtime();
         auto cluster_duration = cluster_end_time - cluster_start_time;
         printf("Clusters Update made in: %f seconds\n",cluster_duration);
+        logFile << "Iteration " << iteration_num + 1 << ": " << cluster_duration << " seconds" << endl;
     }
     double end_time2 = omp_get_wtime();
     duration = end_time2 - end_time1;
     printf("Number of iterarions %d, total time %f seconds, iteration time avg %f seconds \n", iteration_num,duration, duration/iteration_num);
     printf("Storing the dots coordinates and cluster-id...\n");
     plot(pts, filename);
+    logFile << "Total time: " << duration << " seconds" << endl;
+    logFile << "Average iteration time: " << (duration/iteration_num) << " seconds" << endl;
+    logFile.close();
     return 0;
 }
 

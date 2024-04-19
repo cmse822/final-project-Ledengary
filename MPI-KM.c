@@ -46,6 +46,18 @@ int main(int argc, char **argv){
 	clusters.dataset = (double*)malloc(numClusters * numAttributes * sizeof(double));
 	clusters.members = (unsigned int*)malloc(numClusters * sizeof(unsigned int)); 
 
+    FILE *logFile = NULL;
+    char filename[256];
+
+    if (rank == 0) {
+        sprintf(filename, "outputs/method_comparison/mpi_%d_%d_%d_%d.txt", number_of_dots, number_of_clusters, max_iterations, number_of_processes);
+        logFile = fopen(filename, "w");
+        if (!logFile) {
+            fprintf(stderr, "Failed to open log file for writing.\n");
+            MPI_Abort(MPI_COMM_WORLD, 1);
+        }
+    }
+
 	double start_time, init_end_time;
 	if (rank == 0) {
 		printf("Number of Points %d\n", numObjects);
@@ -60,6 +72,7 @@ int main(int argc, char **argv){
 		init_end_time = MPI_Wtime();
 		printf("Points and Clusters Created \n");
 	    printf("Initialization made in: %f seconds\n", init_end_time - start_time);
+		fprintf(logFile, "Initialization time: %f seconds\n", init_end_time - start_time);
  	 }
 	MPI_Barrier(MPI_COMM_WORLD);
 	MPI_Bcast(clusters.dataset, numClusters*numAttributes, MPI_DOUBLE, 0, MPI_COMM_WORLD);
@@ -128,6 +141,7 @@ int main(int argc, char **argv){
 			iter_end_time = MPI_Wtime();
 			printf("Iteration %d \n", iter + 1);
 			printf("Clusters Update made in: %f seconds\n", iter_end_time - iter_start_time);
+			fprintf(logFile, "Iteration %d: %f seconds\n", iter + 1, iter_end_time - iter_start_time);
 		}
 	}
 	free(newCentroids);
@@ -146,6 +160,9 @@ int main(int argc, char **argv){
 		printf("Number of iterations %d, total time %f seconds, iteration time avg %f seconds\n", 
 			iter, total_time, total_time / iter);
 		printf("Storing the points coordinates and cluster-id...\n");
+        fprintf(logFile, "Total time: %f seconds\n", total_time);
+        fprintf(logFile, "Average iteration time: %f seconds\n", total_time / max_iterations);
+        fclose(logFile);
 	}
 	mpi_plot(&data_in, numAttributes, numObjects, "MPI_clusters.txt");
 	clean(&p_data);	

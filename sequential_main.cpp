@@ -15,6 +15,9 @@ int iterations = 20;
 vector<Dot> create_point(int number_of_dots);
 vector<Cluster> create_cluster(int number_of_clusters);
 void plot(vector<Dot> &dots);
+void find_distance(vector<Dot> &pts, vector<Cluster> &cls);
+bool update_clusters(vector<Cluster> &cls);
+double euclidean_dist(Dot pt, Cluster cl);
 
 int main() {
     srand(time(NULL));
@@ -42,8 +45,10 @@ int main() {
 
     while(iteration_num < iterations && iterate){
         iteration_num ++;
+        find_distance(pts,cls);
         double cluster_start_time = omp_get_wtime();
         // Updating of clusters centroids
+        iterate = update_clusters(cls);
         printf("Iteration %d \n",iteration_num);
         double cluster_end_time = omp_get_wtime();
         auto cluster_duration = cluster_end_time - cluster_start_time;
@@ -65,4 +70,34 @@ void plot(vector<Dot> &dots){
         Myfile << point.get_x() << "," << point.get_y() << "," << point.get_cluster_id() << endl;
     }
     Myfile.close();
+}
+
+void find_distance(vector<Dot>&pts,vector<Cluster>&cls){
+        unsigned long pts_size = pts.size();
+        unsigned long cls_size = cls.size();
+
+        double min_dist;
+        int min_index;
+
+    for (int i = 0; i <pts_size ; i++) {
+        Dot &current_point = pts[i];
+        min_dist = euclidean_dist(current_point,cls[0]);
+        min_index = 0;
+        for (int j = 0; j < cls_size; j++) {
+            Cluster &current_cluster = cls[j];
+            double dist = euclidean_dist(current_point, current_cluster);
+            if (dist<min_dist){
+                min_dist = dist;
+                min_index = j;
+            }
+        }
+        pts[i].set_id(min_index);
+        cls[min_index].add_point(pts[i]);
+    }
+ }
+
+double euclidean_dist(Dot pt, Cluster cl){
+    double dist =sqrt(pow(pt.get_x() - cl.get_x(),2) +
+                      pow(pt.get_y() - cl.get_y(), 2));
+    return dist;
 }

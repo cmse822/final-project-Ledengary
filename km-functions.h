@@ -13,14 +13,24 @@
 using namespace std;
 
 
-void plot(vector<Dot> &dots, string filename){
-    ofstream Myfile(filename);
-    Myfile << "x,y,cluster_id"<< endl ;
+void plot(vector<Dot> &dots, string filename, int num_pts, int num_cls, int iterations, int num_threads){
+    // add .txt to the end of the filename
+    string general_filename = filename + ".txt";
+    ofstream Myfile1(general_filename); // Use a different variable name
+    Myfile1 << "x,y,cluster_id"<< endl ;
     for(int i = 0; i < dots.size(); i++){
         Dot point = dots[i];
-        Myfile << point.get_x() << "," << point.get_y() << "," << point.get_cluster_id() << endl;
+        Myfile1 << point.get_x() << "," << point.get_y() << "," << point.get_cluster_id() << endl;
     }
-    Myfile.close();
+    string specific_filename = "outputs/sanity_checks/" + filename + "_" + to_string(num_pts) + "_" + to_string(num_cls) + "_" + to_string(iterations) + "_" + to_string(num_threads) + ".txt";
+    ofstream Myfile2(specific_filename); // Use a different variable name
+    Myfile2 << "x,y,cluster_id"<< endl ;
+    for(int i = 0; i < dots.size(); i++){
+        Dot point = dots[i];
+        Myfile2 << point.get_x() << "," << point.get_y() << "," << point.get_cluster_id() << endl;
+    }
+    Myfile1.close();
+    Myfile2.close();
 }
 
 double euclidean_dist(Dot pt, Cluster cl){

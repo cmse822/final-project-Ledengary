@@ -13,14 +13,14 @@ int iterations = 100;
 double max_value = 1000000;
 int number_of_threads = 10;
 string input_filename = "MPI_clusters.txt";
-string filename = "parallel_clusters.txt";
+string filename = "parallel_clusters";
 
 vector<Dot> create_dot(int number_of_dots, int max_value);
 vector<Cluster> create_cluster(int number_of_clusters, int max_value);
 void find_distance(vector<Dot> &pts, vector<Cluster> &cls);
 double euclidean_dist(Dot pt, Cluster cl);
 bool update_clusters(vector<Cluster> &cls);
-void plot(vector<Dot> &points, string filename);
+void plot(vector<Dot> &points, string filename, int number_of_dots, int number_of_clusters, int iterations, int number_of_threads);
 
 
 int main() {
@@ -68,7 +68,7 @@ int main() {
     printf("Number of iterarions %d, total time %f seconds, iteration time avg %f seconds \n",
            iteration_num,duration, duration/iteration_num);
     printf("Storing the points coordinates and cluster-id...\n");
-    plot(pts, filename);
+    plot(pts, filename, number_of_dots, number_of_clusters, iterations, number_of_threads);
     logFile << "Total time: " << duration << " seconds" << endl;
     logFile << "Average iteration time: " << (duration/iteration_num) << " seconds" << endl;
     logFile.close();

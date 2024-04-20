@@ -11,7 +11,7 @@
 int number_of_dots = 50000;
 int  number_of_clusters = 100;
 int max_iterations = 100;
-int number_of_processes = 2;
+int number_of_processes = 10;
 
 void clean(data_struct* data1);
 void print(data_struct* data2print);
@@ -195,6 +195,7 @@ void mpi_plot(data_struct* data, int numAttributes, int numObjects, const char* 
         fclose(file);
         free(all_data);
     }
+	
 }
 
 void random_initialization(data_struct *data_in){

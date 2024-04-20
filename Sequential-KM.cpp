@@ -7,8 +7,8 @@
 #include "fstream"
 using namespace std;
 
-int number_of_dots = 500;
-int  number_of_clusters = 10;
+int number_of_dots = 5000000;
+int  number_of_clusters = 100;
 int iterations = 100;
 double max_value = 1000000;
 string input_filename = "MPI_clusters.txt";

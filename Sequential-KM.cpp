@@ -26,7 +26,6 @@ int main() {
     printf("Number of dots %d\n",number_of_dots);
     printf("Number of Clusters %d\n",number_of_clusters);
 
-    double start_time = omp_get_wtime();
     printf("Initialization \n");
 
     printf("Creation of the dots \n");
@@ -34,6 +33,7 @@ int main() {
     vector<Dot> pts = read_dots_from_file(input_filename);
     printf("dots Created \n");
 
+    double start_time = omp_get_wtime();
     printf("Creations of the Clusters \n");
     vector<Cluster> cls = create_cluster(number_of_clusters, max_value);
     printf("Clusters Created \n");

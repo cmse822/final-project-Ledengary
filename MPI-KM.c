@@ -11,7 +11,7 @@
 int number_of_dots = 50000;
 int  number_of_clusters = 100;
 int max_iterations = 100;
-int number_of_processes = 10;
+int number_of_processes = 2;
 
 void clean(data_struct* data1);
 void print(data_struct* data2print);
@@ -63,10 +63,10 @@ int main(int argc, char **argv){
 		printf("Number of Points %d\n", numObjects);
 		printf("Number of Clusters %d\n", numClusters);
 		printf("Initialization \n");
-		start_time = MPI_Wtime();
 	}
 	random_initialization(&data_in);
 	if (rank == 0){
+		start_time = MPI_Wtime();
 		printf("Creation of the Points and Clusters\n");
 		initialize_clusters(&data_in, &clusters);
 		init_end_time = MPI_Wtime();

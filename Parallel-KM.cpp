@@ -28,14 +28,14 @@ int main() {
     printf("Number of Points %d\n",number_of_dots);
     printf("Number of Clusters %d\n",number_of_clusters);
 
-    double start_time = omp_get_wtime();
-
     printf("Initialization \n");
 
     printf("Creation of the Points \n");
     // vector<Dot> pts = create_dot(number_of_dots, max_value);
     vector<Dot> pts = read_dots_from_file(input_filename);
     printf("Points Created \n");
+
+    double start_time = omp_get_wtime();
 
     printf("Creations of the Clusters \n");
     vector<Cluster> cls = create_cluster(number_of_clusters, max_value);

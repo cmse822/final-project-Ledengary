@@ -8,10 +8,10 @@
 #include <mpi.h>
 
 
-int number_of_dots = 50000;
+int number_of_dots = 5000000;
 int  number_of_clusters = 100;
 int max_iterations = 100;
-int number_of_processes = 10;
+int number_of_processes = 8;
 
 void clean(data_struct* data1);
 void print(data_struct* data2print);
@@ -62,6 +62,7 @@ int main(int argc, char **argv){
 	if (rank == 0) {
 		printf("Number of Points %d\n", numObjects);
 		printf("Number of Clusters %d\n", numClusters);
+		printf("Number of Processes %d\n", processors);
 		printf("Initialization \n");
 	}
 	random_initialization(&data_in);

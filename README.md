@@ -35,4 +35,146 @@ The structure of this writeup is organized as follows:
 - **3. Results**: Presents the performance results of the implementations, analyzed through various metrics such as runtime, scalability, and efficiency.
 - **4. Conclusions**: Discusses the findings in the context of parallel computing effectiveness and suggests directions for future research.
 
-This writeup ensures comprehensive documentation of computational methods and performance results to facilitate reproducibility and provide insights into the effectiveness of parallel processing techniques in data-intensive tasks.
+# 2. Methods
+
+This section describes the methods used to implement and evaluate the K-means clustering algorithm under different computational strategies, starting with the sequential approach.
+
+## 2.1 Sequential Implementation
+
+### 2.1.1 Overview
+
+The sequential version of the K-means algorithm serves as the baseline for comparison with parallel implementations. It was executed on a single-threaded environment to establish a control performance metric. This method helps in understanding the performance gains achieved through parallel processing techniques.
+
+### 2.1.2 Implementation Details
+
+**Environment Setup:**
+- **Compiler**: The code was compiled using `clang++` with support for OpenMP to enable easy toggling of multithreading for experimental purposes.
+- **Libraries**: Standard C++ libraries along with `<chrono>` for timing, `<cmath>` for mathematical functions, and `<fstream>` for file operations were used.
+
+**Main Components:**
+- **Data Initialization**: The dataset, initially read from `"MPI_clusters.txt"`, represents the starting points for clustering, ensuring consistency across different implementations.
+- **Cluster Initialization**: Randomly generates initial centroids within the range defined by `max_value`.
+- **Distance Calculation**: Computes Euclidean distance between points and centroids to determine the nearest cluster.
+- **Cluster Update**: Adjusts centroids based on the mean of points assigned to each cluster.
+
+**Execution Flow:**
+1. **Start Timing**: Marks the beginning of the initialization phase.
+2. **Read Input**: Points are read from a pre-generated file to ensure consistency.
+3. **Initialize Clusters**: Random centroids are generated.
+4. **End Initialization Timing**: Concludes the timing of the initialization phase.
+5. **Iterative Optimization**:
+   - For each iteration, distances are calculated, and clusters are updated.
+   - The time for each iteration is logged for later analysis.
+6. **Conclude**: Finalizes the clustering process and records total execution time and average iteration time.
+
+**Logging**:
+- Outputs are logged into a file named `"sequential_clusters.txt"`, capturing initialization time, per-iteration time, total time, and average time per iteration. 
+
+### 2.1.3 Compilation and Execution
+
+Compiled and executed with the following commands:
+```bash
+clang++ -fopenmp -o sequential_km Sequential-KM.cpp -L/opt/homebrew/opt/llvm/lib -I/opt/homebrew/opt/llvm/include -Wl,-rpath,/opt/homebrew/opt/llvm/lib
+./sequential_km
+
+
+## 2.2 Parallel Implementation Using OpenMP
+
+### 2.2.1 Overview
+
+The OpenMP implementation of the K-means algorithm aims to leverage multi-threading capabilities to reduce the computational time required for clustering large datasets. This parallel approach focuses on distributing the computation of distances and cluster assignments across multiple threads.
+
+### 2.2.2 Parallelization Details
+
+**Environment Setup:**
+- Utilizes the same compiler and libraries as the sequential implementation to maintain consistency.
+
+**Enhancements in OpenMP:**
+- **Parallel Loops**: Key loops in the `find_distance()` and `update_clusters()` functions are parallelized.
+- **Data Sharing**: Points and clusters are shared among threads, whereas minimum distances and indices are kept private to prevent data races.
+- **Synchronization**: Critical sections are used to safely update cluster centroids when multiple threads attempt to modify the same data.
+
+**Execution Flow:**
+1. Initialization remains identical to the sequential version to ensure that any performance differences are due solely to the computation phases.
+2. **Parallel Distance Calculation**:
+   - Each thread computes distances for a subset of points to all centroids.
+   - Threads independently determine the closest centroids for their assigned points.
+3. **Concurrent Cluster Updates**:
+   - Once points are assigned, threads collaboratively update centroid positions using atomic operations to avoid inconsistencies.
+
+### 2.2.3 Compilation and Execution
+
+The parallel version can be compiled and run using the same commands as the sequential version but requires an environment supporting OpenMP.
+
+### 2.2.4 Performance Metrics
+
+Performance is measured in terms of:
+- **Initialization Time**: Time taken to set up clusters and read data.
+- **Iteration Time**: Average time per iteration during the clustering process.
+- **Total Execution Time**: Time from start to finish of the clustering algorithm.
+
+Performance results are documented for various thread counts to analyze scalability and efficiency gains from parallel processing.
+
+### 2.2.5 Key Functions in Parallel Implementation
+
+#### Find Distance Function
+
+The `find_distance` function is responsible for calculating the Euclidean distance between each point and all centroids, assigning each point to the nearest cluster. This function is highly parallelizable as each point's calculation is independent of others.
+
+**Parallelization Strategy**:
+- **Outer Loop Parallelization**: The loop over points is parallelized, allowing each thread to handle a subset of points.
+- **Private Variables**: Minimum distance and index variables are private to each thread to prevent read-write conflicts.
+- **Shared Data**: Points and clusters are shared across all threads since they are read concurrently without modification.
+
+**OpenMP Pragma**:
+```cpp
+#pragma omp parallel for private(min_dist, min_index) shared(pts, cls) schedule(static, 1000)
+for (int i = 0; i < pts_size; ++i) {
+    Point &current_point = pts[i];
+    min_dist = euclidean_dist(current_point, cls[0]);
+    min_index = 0;
+    for (int j = 0; j < cls_size; ++j) {
+        double dist = euclidean_dist(current_point, cls[j]);
+        if (dist < min_dist) {
+            min_dist = dist;
+            min_index = j;
+        }
+    }
+    pts[i].set_id(min_index);
+}
+```
+
+This code snippet demonstrates the use of OpenMP to distribute the workload of computing distances across multiple threads.
+
+#### Update Clusters Function
+
+The `update_clusters` function adjusts the centroids based on the newly assigned points. This function involves modifying shared data, which requires careful synchronization.
+
+**Parallelization Strategy**:
+- **Reduction of Cluster Properties**: To efficiently compute the new centroid positions, properties like the total coordinates are combined at the end of each iteration using a reduction clause.
+- **Critical Section**: Updating centroid positions is placed within a critical section to ensure that updates from different threads do not interfere with each other.
+
+**OpenMP Pragma**:
+```cpp
+#pragma omp for schedule(static)
+for (int i = 0; i < cls_size; ++i) {
+    if (cls[i].update_values()) {
+        #pragma omp critical
+        {
+            cls[i].compute_new_centroid();
+        }
+    }
+}
+```
+
+This section ensures that while the update of centroids requires synchronization, the check for movement (`update_values`) does not, optimizing concurrency while maintaining data integrity. These enhancements are crucial for achieving significant performance improvements in the parallel version of the K-means algorithm by effectively utilizing multi-threading capabilities provided by OpenMP.
+
+**Logging**:
+- Outputs are logged into a file named `"parallel_clusters.txt"`, capturing initialization time, per-iteration time, total time, and average time per iteration. 
+
+### 2.2.6 Compilation and Execution
+Compiled and executed with the following commands:
+```bash
+lang++ -fopenmp -o parallel_km Parallel-KM.cpp -L/opt/homebrew/opt/llvm/lib -I/opt/homebrew/opt/llvm/include -Wl,-rpath,/opt/homebrew/opt/llvm/lib
+./parallel_km 
+```

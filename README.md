@@ -6,7 +6,7 @@ In the modern era of computational science, efficient processing of large datase
 
 K-means clustering involves partitioning n observations into k clusters in which each observation belongs to the cluster with the nearest mean. This mean serves as a prototype of the cluster. Given its computationally intensive nature, especially with large datasets or high dimensionality, parallel computing can play a pivotal role. Parallel computing uses multiple processing elements simultaneously to solve a problem, which can significantly improve the computation speed and efficiency.
 
-This project investigates the application of two parallel computing paradigms: Message Passing Interface (MPI) and Open Multi-Processing (OpenMP). Their effectiveness is evaluated based on performance metrics such as computation time and efficiency in implementing the K-means clustering algorithm.
+This project investigates the application of two parallel computing paradigms: Message Passing Interface (MPI) and Open Multi-Processing (OpenMP). Their effectiveness is evaluated based on performance metrics such as computation time and efficiency in implementing the K-means clustering algorithm [1, 2, 3].
 
 ## 1.1 Background
 
@@ -81,11 +81,11 @@ clang++ -fopenmp -o sequential_km Sequential-KM.cpp -L/opt/homebrew/opt/llvm/lib
 ./sequential_km
 ```
 
-## 2.2 Parallel Implementation 
+## 2.2 OpenMP Implementation 
 
 ### 2.2.1 Overview
 
-The OpenMP implementation of the K-means algorithm aims to leverage multi-threading capabilities to reduce the computational time required for clustering large datasets. This parallel approach focuses on distributing the computation of distances and cluster assignments across multiple threads.
+The OpenMP implementation of the K-means algorithm [4] aims to leverage multi-threading capabilities to reduce the computational time required for clustering large datasets. This parallel approach focuses on distributing the computation of distances and cluster assignments across multiple threads.
 
 ### 2.2.2 Implementation Details
 
@@ -186,7 +186,7 @@ lang++ -fopenmp -o parallel_km Parallel-KM.cpp -L/opt/homebrew/opt/llvm/lib -I/o
 
 ### 2.3.1 Overview
 
-The MPI implementation of the K-means algorithm is designed to leverage the distributed computing capabilities across multiple nodes in a cluster. This approach aims to handle even larger datasets by distributing the workload effectively across multiple processing units.
+The MPI implementation of the K-means algorithm [5] is designed to leverage the distributed computing capabilities across multiple nodes in a cluster. This approach aims to handle even larger datasets by distributing the workload effectively across multiple processing units.
 
 ### 2.3.2 Implementation Details
 
@@ -344,3 +344,15 @@ These findings demonstrate that for tasks like K-means clustering, which are inh
 The implications of this work underscore the importance of choosing the right parallelization strategy based on the nature of the task and the available computing resources. For single-node systems with shared memory, OpenMP offers a straightforward method to gain performance benefits. However, for tasks that require the processing of large-scale datasets, MPI's distributed computing capabilities are more suitable.
 
 Future directions for this work include investigating hybrid models that combine MPI and OpenMP to leverage both intra-node and inter-node parallelism on larger dimensionality of feature representations (> 2D, which I investigated in this project). Additionally, further research could explore the application of these parallelization techniques to other machine learning algorithms that present different challenges and opportunities for parallel processing. The exploration of dynamic load balancing strategies to enhance the performance of parallel algorithms on heterogeneous computing environments is also a promising avenue for further research.
+
+# 5. References
+
+[1] Farivar, R., Rebolledo, D., Chan, E., & Campbell, R. (2008). A Parallel Implementation of K-Means Clustering on GPUs.
+
+[2] Huang, S.-y., & Zhang, B. (2021). Research and improvement of k-means parallel multi-association clustering algorithm. In Proceedings of the 2020 International Conference on Cyberspace Innovation of Advanced Technologies (pp. 164–168). Association for Computing Machinery. https://doi.org/10.1145/3444370.3444565
+
+[3] Yufang Zhang, Zhongyang Xiong, Jiali Mao, & Ling Ou. (2006). The Study of Parallel K-Means Algorithm. In 2006 6th World Congress on Intelligent Control and Automation (pp. 5868–5871). https://doi.org/10.1109/WCICA.2006.1714203
+
+[4] Naik, D. S. B., Kumar, S. D., & Ramakrishna, S. V. (2013). Parallel processing of enhanced K-means using OpenMP. In 2013 IEEE International Conference on Computational Intelligence and Computing Research (pp. 1–4). https://doi.org/10.1109/ICCIC.2013.6724291
+
+[5] Zhang, J., Wu, G., Hu, X., Li, S., & Hao, S. (2011). A Parallel K-Means Clustering Algorithm with MPI. In 2011 Fourth International Symposium on Parallel Architectures, Algorithms and Programming (pp. 60–64). https://doi.org/10.1109/PAAP.2011.17

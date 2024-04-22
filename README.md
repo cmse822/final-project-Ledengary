@@ -15,27 +15,21 @@ This project investigates the application of two parallel computing paradigms: M
 The K-means algorithm operates through an iterative refinement technique involving:
 
 1. **Initialization**:
-    - Select \( K \) initial centroids \( \{c_1, c_2, ..., c_K\} \) either randomly or based on some heuristic.
+   - Select K initial centroids (c1, c2, ..., cK) either randomly or based on some heuristic.
 
 2. **Assignment**:
-    - Each data point \( x_i \) is assigned to the closest centroid based on the Euclidean distance. Formally, this assignment \( S \) can be represented as:
-      \[
-      S_i = \arg\min_{c_j} \| x_i - c_j \|^2, \quad j = 1, ..., K
-      \]
+   - Each data point xi is assigned to the closest centroid based on the Euclidean distance. This assignment S can be represented as: 
+     - Si = arg min cj ‖ xi - cj ‖^2, for j = 1, ..., K
 
 3. **Update**:
-    - The centroids are recalculated as the mean of all points assigned to that cluster:
-      \[
-      c_j = \frac{1}{|S_j|} \sum_{x_i \in S_j} x_i, \quad j = 1, ..., K
-      \]
-      where \( |S_j| \) denotes the number of points in the \( j^{th} \) cluster.
+   - The centroids are recalculated as the mean of all points assigned to that cluster:
+     - cj = (1/|Sj|) * Σ xi for all xi in Sj, for j = 1, ..., K
+     where |Sj| denotes the number of points in the j-th cluster.
 
 4. **Iteration**:
-    - Steps 2 and 3 are repeated until the centroids no longer change significantly, indicating that the algorithm has converged. A common convergence criterion is when the assignments no longer change:
-      \[
-      \Delta S = 0
-      \]
-      where \( \Delta S \) denotes the change in assignments from one iteration to the next.
+   - Steps 2 and 3 are repeated until the centroids no longer change significantly, indicating that the algorithm has converged. A common convergence criterion is when the assignments no longer change:
+     - ΔS = 0
+     where ΔS denotes the change in assignments from one iteration to the next.
 
 Parallelizing K-means is challenging due to its iterative nature and dependencies between data points and centroids. Various strategies can be employed to distribute the workload across different processors.
 

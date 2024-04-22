@@ -257,7 +257,7 @@ Similar to other implementations, logs include detailed timing for initializatio
 
 ### 2.3.6 Compilation and Execution
 
-**Compilation**:
+Compiled and executed with the following commands:
 ```bash
 mpicc -c MPI-KM.c -o MPI-KM.o
 mpicc -c MPI-KM-funcs.c -o MPI-KM-funcs.o

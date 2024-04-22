@@ -178,3 +178,88 @@ Compiled and executed with the following commands:
 lang++ -fopenmp -o parallel_km Parallel-KM.cpp -L/opt/homebrew/opt/llvm/lib -I/opt/homebrew/opt/llvm/include -Wl,-rpath,/opt/homebrew/opt/llvm/lib
 ./parallel_km 
 ```
+
+## 2.3 MPI Implementation
+
+### 2.3.1 Overview
+
+The MPI implementation of the K-means algorithm is designed to leverage the distributed computing capabilities across multiple nodes in a cluster. This approach aims to handle even larger datasets by distributing the workload effectively across multiple processing units.
+
+### 2.3.2 Implementation Details
+
+**Environment Setup:**
+- **Compiler**: The MPI version was developed using the C programming language due to compatibility and performance considerations on the available computing cluster.
+- **Libraries**: Uses MPI library for handling data distribution and aggregation across different nodes.
+
+**Main Components:**
+- **Data Distribution**: Initial data points and centroids are distributed across different nodes to ensure parallel processing without interference.
+- **Concurrent Computation**: Each node computes distances and assigns points to clusters independently.
+- **Reduction Operations**: MPI reduce operations are used to aggregate data and update global centroids accurately.
+
+**Execution Flow:**
+1. **Initialization**: Similar to the sequential and OpenMP implementations, with additional steps to distribute data across nodes.
+2. **Parallel Distance Calculation and Assignment**:
+   - Each process calculates distances for a subset of points to all centroids.
+   - Points are then assigned to the nearest centroid locally.
+3. **Global Update**:
+   - Global centroid updates are performed using MPI's reduction functions to ensure all nodes have updated and consistent centroid values.
+
+**Communication Patterns**:
+- Uses `MPI_Bcast` for broadcasting initial centroids.
+- Employs `MPI_Allreduce` for gathering and reducing centroid updates from all nodes.
+
+### 2.3.3 Compilation and Execution
+
+**Compilation**:
+```bash
+mpicc -c MPI-KM.c -o MPI-KM.o
+mpicc -c MPI-KM-funcs.c -o MPI-KM-funcs.o
+mpicc MPI-KM-funcs.o MPI-KM.o -o MPI-KM
+mpirun -np <NUMBER_OF_PROCESSORS> ./MPI-KM
+```
+
+### 2.3.4 Key Functions in MPI Implementation
+**K-means Distancer Function**
+This function, executed on each node, calculates the distances from points to centroids, assigns points to the nearest cluster, and partially updates centroid coordinates locally.
+```c
+void kmeans_distancer(data_struct *data_in, data_struct *clusters, double *newCentroids, double* SumOfDist)
+{
+	int i, j, k;
+	double tmp_dist = 0;
+	int tmp_index = 0;
+	double min_dist = 0;
+	double *dataset = data_in->dataset;
+	double *centroids = clusters->dataset;
+	unsigned int *Index = data_in->members;
+	unsigned int *cluster_size = clusters->members;
+
+	for (i = 0; i < clusters->secondary_dim; i++){
+		cluster_size[i] = 0;
+	}
+	for (i = 0; i < data_in->secondary_dim; i++){
+		tmp_dist = 0;
+		tmp_index = 0;
+		min_dist = FLT_MAX;
+		for (k = 0; k < clusters->secondary_dim; k++){
+			tmp_dist = euclidean_distance(dataset + i * data_in->leading_dim, centroids + k * clusters->leading_dim, data_in->leading_dim);
+			if (tmp_dist<min_dist){
+				min_dist = tmp_dist;
+				tmp_index = k;
+			}
+		}
+		Index[i] = tmp_index;
+		SumOfDist[0] += min_dist;
+		cluster_size[tmp_index]++;
+		for (j = 0; j < data_in->leading_dim; j++){
+			newCentroids[tmp_index * clusters->leading_dim + j] += dataset[i * data_in->leading_dim + j]; 
+		}
+	}
+}
+```
+
+**Parallel and Distributed Strategies:**
+- Each node operates on its local data independently.
+- Uses collective communication to ensure all nodes synchronize their results effectively.
+
+### 2.3.6 Logging and Output
+Similar to other implementations, logs include detailed timing for initialization, each iteration, and total computation time are stored in `"MPI_clusters.txt"`. 

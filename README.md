@@ -10,9 +10,9 @@ This project investigates the application of two parallel computing paradigms: M
 
 ## 1.1 Background
 
-The K-means algorithm operates through an iterative refinement technique involving:
-
 ![K-Means Clustering Algorithm in Machine Learning](outputs/figures/k-means-clustering-algorithm-in-machine-learning.png)
+
+The K-means algorithm operates through an iterative refinement technique involving:
 
 1. **Initialization**: Defining K initial "means" (centroids).
 2. **Assignment**: Assigning each data point to the nearest centroid.
@@ -267,3 +267,63 @@ mpicc -c MPI-KM-funcs.c -o MPI-KM-funcs.o
 mpicc MPI-KM-funcs.o MPI-KM.o -o MPI-KM
 mpirun -np <NUMBER_OF_PROCESSORS> ./MPI-KM
 ```
+
+### 3. Results
+#### 3.1 Performance Analysis
+
+The performance of the K-means clustering algorithm was measured across different computational approaches and dataset sizes. This analysis presents the results of the total computation time and average iteration time for sequential, MPI, and OpenMP implementations.
+
+#### 3.2 Experimental Setup
+
+- Dataset Sizes: 5,000 to 5,000,000 points
+- Clusters: 100
+- Iterations: 100
+- Processors/Threads: 1, 2, 4, 6, 8, 10
+
+#### 3.3 Total Time and Average Iteration Time
+
+The following figures compare the total computation time and the average time per iteration across different numbers of processes/threads for MPI and OpenMP, with the sequential approach as a baseline.
+
+##### 3.3.1 Comparison for 5,000 Points
+
+For a small dataset of 5,000 points, the performance gains with increasing processors/threads are evident. MPI and OpenMP show significant improvements over sequential execution, with MPI often outperforming OpenMP as the number of processors increases.
+
+##### 3.3.2 Comparison for 50,000 Points
+
+As the dataset size increases to 50,000 points, the benefit of parallel computing becomes more pronounced. Both MPI and OpenMP maintain a lower computation time than the sequential approach, with MPI showing the best performance at higher processor counts.
+
+##### 3.3.3 Comparison for 500,000 Points
+
+At 500,000 points, the efficiency of MPI in a distributed environment is highlighted, managing to maintain scalability and outperforming OpenMP in total computation time. However, OpenMP shows competitive performance, especially in the average time per iteration.
+
+##### 3.3.4 Comparison for 5,000,000 Points
+
+For the largest tested dataset of 5,000,000 points, MPI's distributed computing capabilities shine, achieving the best scalability and efficiency. OpenMP's performance also scales well, but the advantages of MPI's distributed memory model are apparent in handling large-scale data.
+
+#### 3.4 Discussion
+
+##### 3.4.1 OpenMP Trends
+
+In the OpenMP implementation, increasing the number of threads up to a certain point results in a decrease in both total and average iteration times, demonstrating the expected performance improvement from parallelization. However, this decline in time is not consistent; at higher thread counts, the performance plateaus and, in some cases, even slightly increases. This could be due to a variety of factors including:
+
+- Overhead of managing additional threads: As the number of threads increases, the overhead associated with creating, managing, and synchronizing them may outweigh the benefits of parallel execution.
+- Memory bandwidth saturation: On shared-memory architectures, all threads compete for a finite amount of memory bandwidth. As more threads are added, the system may hit a bottleneck where memory cannot be supplied to threads quickly enough, leading to sub-optimal utilization of CPU resources.
+- Amdahl's Law: The principle that the speedup of a program from parallelization is limited by the time needed for the sequential fraction of the task, which means there is an upper limit to the benefit gained from adding more parallel execution units.
+
+##### 3.4.2 MPI Trends
+
+The MPI implementation, conversely, displays a more consistent decline in computation times as the number of processes increases. This consistent performance improvement can be attributed to the distributed nature of the MPI paradigm where each process operates independently on a separate data subset, reducing memory contention and communication overhead between threads. The distributed memory model of MPI allows for more effective scaling as it is not constrained by the shared memory bandwidth.
+
+##### 3.4.3 Comparison Between MPI and OpenMP
+
+MPI consistently outperforms OpenMP across all scenarios for several reasons:
+
+- Distributed vs. Shared Memory: MPI's distributed memory model allows it to better handle larger datasets as it is less likely to be bottlenecked by shared resources.
+- Scalability: MPI scales more efficiently across multiple nodes in a cluster, leveraging increased computational resources more effectively than OpenMP, which is confined to a single node.
+- Network Communication: MPI is designed for network communication between distributed processes and is optimized for passing messages efficiently, which is crucial for the reduce and broadcast operations in the K-means algorithm.
+
+##### 3.4.4 Sequential Performance
+
+Sequential execution remains consistently slower, approximately 5 times, than both MPI and OpenMP implementations. This substantial performance gap is a clear indicator of the limitations inherent in single-threaded processing for computationally intensive tasks. The inability to parallelize the workload in the sequential approach means it cannot utilize the additional computational resources that significantly boost the performance of MPI and OpenMP.
+
+In conclusion, while both parallel paradigms significantly improve performance over sequential processing, MPI exhibits superior scalability and consistency in decreasing computation times. This makes MPI particularly well-suited for high-performance computing environments where large datasets are processed across multiple nodes. The choice between MPI and OpenMP will thus depend on the specific requirements and constraints of the computing environment and the size of the dataset being processed.

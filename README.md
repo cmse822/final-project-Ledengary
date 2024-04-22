@@ -286,17 +286,25 @@ The following figures compare the total computation time and the average time pe
 
 #### 3.3.1 Comparison for 5,000 Points
 
+![Total Avg Time Comparison - 5,000 Points](outputs/figures/total_avg_time_comparison_5000_points.png)
+
 For a small dataset of 5,000 points, the performance gains with increasing processors/threads are evident. MPI and OpenMP show significant improvements over sequential execution, with MPI often outperforming OpenMP as the number of processors increases.
 
 #### 3.3.2 Comparison for 50,000 Points
+
+![Total Avg Time Comparison - 50,000 Points](outputs/figures/total_avg_time_comparison_50000_points.png)
 
 As the dataset size increases to 50,000 points, the benefit of parallel computing becomes more pronounced. Both MPI and OpenMP maintain a lower computation time than the sequential approach, with MPI showing the best performance at higher processor counts.
 
 #### 3.3.3 Comparison for 500,000 Points
 
+![Total Avg Time Comparison - 500,000 Points](outputs/figures/total_avg_time_comparison_500000_points.png)
+
 At 500,000 points, the efficiency of MPI in a distributed environment is highlighted, managing to maintain scalability and outperforming OpenMP in total computation time. However, OpenMP shows competitive performance, especially in the average time per iteration.
 
 #### 3.3.4 Comparison for 5,000,000 Points
+
+![Total Avg Time Comparison - 5,000,000 Points](outputs/figures/total_avg_time_comparison_5000000_points.png)
 
 For the largest tested dataset of 5,000,000 points, MPI's distributed computing capabilities shine, achieving the best scalability and efficiency. OpenMP's performance also scales well, but the advantages of MPI's distributed memory model are apparent in handling large-scale data.
 

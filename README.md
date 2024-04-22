@@ -76,7 +76,7 @@ Compiled and executed with the following commands:
 ```bash
 clang++ -fopenmp -o sequential_km Sequential-KM.cpp -L/opt/homebrew/opt/llvm/lib -I/opt/homebrew/opt/llvm/include -Wl,-rpath,/opt/homebrew/opt/llvm/lib
 ./sequential_km
-
+```
 
 ## 2.2 Parallel Implementation Using OpenMP
 

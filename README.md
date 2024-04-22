@@ -208,17 +208,8 @@ The MPI implementation of the K-means algorithm is designed to leverage the dist
 - Uses `MPI_Bcast` for broadcasting initial centroids.
 - Employs `MPI_Allreduce` for gathering and reducing centroid updates from all nodes.
 
-### 2.3.3 Compilation and Execution
 
-**Compilation**:
-```bash
-mpicc -c MPI-KM.c -o MPI-KM.o
-mpicc -c MPI-KM-funcs.c -o MPI-KM-funcs.o
-mpicc MPI-KM-funcs.o MPI-KM.o -o MPI-KM
-mpirun -np <NUMBER_OF_PROCESSORS> ./MPI-KM
-```
-
-### 2.3.4 Key Functions in MPI Implementation
+### 2.3.3 Key Functions in MPI Implementation
 **K-means Distancer Function**
 This function, executed on each node, calculates the distances from points to centroids, assigns points to the nearest cluster, and partially updates centroid coordinates locally.
 ```c
@@ -261,5 +252,15 @@ void kmeans_distancer(data_struct *data_in, data_struct *clusters, double *newCe
 - Each node operates on its local data independently.
 - Uses collective communication to ensure all nodes synchronize their results effectively.
 
-### 2.3.6 Logging and Output
+### 2.3.4 Logging and Output
 Similar to other implementations, logs include detailed timing for initialization, each iteration, and total computation time are stored in `"MPI_clusters.txt"`. 
+
+### 2.3.6 Compilation and Execution
+
+**Compilation**:
+```bash
+mpicc -c MPI-KM.c -o MPI-KM.o
+mpicc -c MPI-KM-funcs.c -o MPI-KM-funcs.o
+mpicc MPI-KM-funcs.o MPI-KM.o -o MPI-KM
+mpirun -np <NUMBER_OF_PROCESSORS> ./MPI-KM
+```

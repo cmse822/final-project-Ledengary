@@ -7,7 +7,6 @@
 #include <math.h>
 #include <mpi.h>
 
-
 int number_of_dots = 5000; // go to 5000
 int  number_of_clusters = 100;
 int max_iterations = 100;
@@ -125,7 +124,7 @@ int main(int argc, char **argv){
 		for (i = 0; i < numClusters * numAttributes; i++){
 			newCentroids[i] = 0;
 		}
-		kmeans_process(&p_data, &clusters, newCentroids, &new_SumOfDist);
+		kmeans_distancer(&p_data, &clusters, newCentroids, &new_SumOfDist);
 		MPI_Allreduce(newCentroids, clusters.dataset, numClusters*numAttributes, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 		MPI_Allreduce(clusters.members, temp_clusterSize, numClusters, MPI_UNSIGNED, MPI_SUM, MPI_COMM_WORLD);  
 		for (i = 0; i < numClusters; i++){

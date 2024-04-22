@@ -5,4 +5,4 @@ typedef struct {
   int secondary_dim; 
 } data_struct;
 
-void kmeans_process(data_struct *data_in, data_struct *clusters, double *newCentroids, double* SumOfDist);
+void kmeans_distancer(data_struct *data_in, data_struct *clusters, double *newCentroids, double* SumOfDist);

@@ -1,0 +1,4 @@
+outputs/sanity_checks/*
+MPI_clusters_5000000.txt
+parallel_clusters.txt
+MPI_clusters_500000.txt

@@ -11,6 +11,9 @@ This project investigates the application of two parallel computing paradigms: M
 ## 1.1 Background
 
 The K-means algorithm operates through an iterative refinement technique involving:
+
+![K-Means Clustering Algorithm in Machine Learning](outputs/figures/k-means-clustering-algorithm-in-machine-learning.png)
+
 1. **Initialization**: Defining K initial "means" (centroids).
 2. **Assignment**: Assigning each data point to the nearest centroid.
 3. **Update**: Recalculating centroids as the mean of all data points assigned to that centroid.

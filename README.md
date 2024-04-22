@@ -78,13 +78,13 @@ clang++ -fopenmp -o sequential_km Sequential-KM.cpp -L/opt/homebrew/opt/llvm/lib
 ./sequential_km
 ```
 
-## 2.2 Parallel Implementation Using OpenMP
+## 2.2 Parallel Implementation 
 
 ### 2.2.1 Overview
 
 The OpenMP implementation of the K-means algorithm aims to leverage multi-threading capabilities to reduce the computational time required for clustering large datasets. This parallel approach focuses on distributing the computation of distances and cluster assignments across multiple threads.
 
-### 2.2.2 Parallelization Details
+### 2.2.2 Implementation Details
 
 **Environment Setup:**
 - Utilizes the same compiler and libraries as the sequential implementation to maintain consistency.

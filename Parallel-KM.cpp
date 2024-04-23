@@ -86,7 +86,7 @@ void find_distance(vector<Dot>&pts,vector<Cluster>&cls){
     int Thread_ID;
     #pragma omp parallel default(none) num_threads(4) private(min_dist, min_index,Thread_ID) firstprivate(pts_size, cls_size) shared(pts,cls)
         {
-    #pragma omp for schedule(static,1000)
+    #pragma omp for schedule(dynamic)
         for (int i = 0; i <pts_size ; ++i) {
             Dot &current_point = pts[i];
             min_dist = euclidean_dist(current_point,cls[0]);

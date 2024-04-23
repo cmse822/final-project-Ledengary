@@ -36,7 +36,7 @@ Parallelizing K-means is challenging due to its iterative nature and dependencie
 ## 1.2 Computational Methods
 
 This project utilizes MPI and OpenMP for parallelization:
-- **MPI** is used to distribute data points across different nodes in a computing cluster, allowing parallel processing in a distributed system.
+- **MPI** is used to distribute data points across different CPUs on my machine, allowing parallel processing in a distributed system.
 - **OpenMP** provides thread-based parallelism suitable for shared-memory architectures, enabling multiple threads to operate on shared data structures and minimize data movement.
 
 ## 1.3 Project Statement
@@ -203,7 +203,7 @@ The MPI implementation of the K-means algorithm [5] is designed to leverage the 
 ### 2.3.2 Implementation Details
 
 **Environment Setup:**
-- **Compiler**: The MPI version was developed using the C programming language due to compatibility and performance considerations on the available computing cluster.
+- **Compiler**: The MPI version was developed using the C programming language due to the better compatibility of the MPI library on Mac with C.
 - **Libraries**: Uses MPI library for handling data distribution and aggregation across different nodes.
 
 **Main Components:**
@@ -291,6 +291,7 @@ The performance of the K-means clustering algorithm was measured across differen
 - Clusters: 100
 - Iterations: 100
 - Processors/Threads: 1, 2, 4, 6, 8, 10
+- Device: Macbook Pro M1 Chip, 10 CPUs
 
 ## 3.3 Total Time and Average Iteration Time
 
@@ -320,9 +321,31 @@ At 500,000 points, the efficiency of MPI in a distributed environment is highlig
 
 For the largest tested dataset of 5,000,000 points, MPI's distributed computing capabilities shine, achieving the best scalability and efficiency. OpenMP's performance also scales well, but the advantages of MPI's distributed memory model are apparent in handling large-scale data.
 
-## 3.4 Discussion
+## 3.4
+## 3.4 Memory Usage Analysis
 
-#### 3.4.1 OpenMP Trends
+Memory consumption is a crucial aspect of evaluating the performance of parallel computing paradigms. The following discussion focuses on the memory utilization observed during the execution of the K-means algorithm.
+
+### 3.4.1 Maximum Resident Set Size
+
+![Maximum Resident Set Size Comparison](outputs/figures/max_resident_set_size_comparison.png)
+
+The maximum resident set size is significantly higher for the MPI implementation compared to sequential and OpenMP. This is likely due to MPI's distributed nature, which involves storing a copy of the entire dataset and additional MPI-related control structures in the memory of each node. Despite the increased memory footprint, this allows MPI to achieve faster computation times, as observed in the performance analysis.
+
+### 3.4.2 Peak Memory Footprints
+
+![Peak Memory Footprints Comparison](outputs/figures/peak_memory_footprints_comparison.png)
+
+The peak memory footprint follows a similar trend, with MPI showing the largest footprint. This is consistent with MPI's design to duplicate data across multiple nodes, allowing for parallel processing but at the cost of higher memory consumption per node. OpenMP shows a moderate increase in memory usage over sequential, which can be attributed to the overhead of maintaining multiple threads and their stacks.
+
+### 3.4.3 Memory Efficiency
+
+While MPI's memory usage is higher, it is important to consider memory efficiency — the amount of memory used relative to the speedup in computation time. Given MPI's superior performance in reducing total computation time, especially for larger datasets, the trade-off in memory usage may be justified when processing at scale. For applications with less stringent memory constraints and the need for high-speed computation, MPI's memory overhead is an acceptable compromise.
+
+
+## 3.5 Discussion
+
+#### 3.5.1 OpenMP Trends
 
 In the OpenMP implementation, increasing the number of threads up to a certain point results in a decrease in both total and average iteration times, demonstrating the expected performance improvement from parallelization. However, this decline in time is not consistent; at higher thread counts, the performance plateaus and, in some cases, even slightly increases. This could be due to a variety of factors including:
 
@@ -330,11 +353,11 @@ In the OpenMP implementation, increasing the number of threads up to a certain p
 - Memory bandwidth saturation: On shared-memory architectures, all threads compete for a finite amount of memory bandwidth. As more threads are added, the system may hit a bottleneck where memory cannot be supplied to threads quickly enough, leading to sub-optimal utilization of CPU resources.
 - Amdahl's Law: The principle that the speedup of a program from parallelization is limited by the time needed for the sequential fraction of the task, which means there is an upper limit to the benefit gained from adding more parallel execution units.
 
-#### 3.4.2 MPI Trends
+#### 3.5.2 MPI Trends
 
 The MPI implementation, conversely, displays a more consistent decline in computation times as the number of processes increases. This consistent performance improvement can be attributed to the distributed nature of the MPI paradigm where each process operates independently on a separate data subset, reducing memory contention and communication overhead between threads. The distributed memory model of MPI allows for more effective scaling as it is not constrained by the shared memory bandwidth.
 
-#### 3.4.3 Comparison Between MPI and OpenMP
+#### 3.5.3 Comparison Between MPI and OpenMP
 
 MPI consistently outperforms OpenMP across all scenarios for several reasons:
 
@@ -342,7 +365,7 @@ MPI consistently outperforms OpenMP across all scenarios for several reasons:
 - Scalability: MPI scales more efficiently across multiple nodes in a cluster, leveraging increased computational resources more effectively than OpenMP, which is confined to a single node.
 - Network Communication: MPI is designed for network communication between distributed processes and is optimized for passing messages efficiently, which is crucial for the reduce and broadcast operations in the K-means algorithm.
 
-#### 3.4.4 Sequential Performance
+#### 3.5.4 Sequential Performance
 
 Sequential execution remains consistently slower, approximately 5 times, than both MPI and OpenMP implementations. This substantial performance gap is a clear indicator of the limitations inherent in single-threaded processing for computationally intensive tasks. The inability to parallelize the workload in the sequential approach means it cannot utilize the additional computational resources that significantly boost the performance of MPI and OpenMP.
 

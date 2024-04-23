@@ -368,9 +368,7 @@ By using schedule(dynamic), the OpenMP runtime dynamically assigns iterations to
 Both MPI and OpenMP have their unique approaches to load balancing, suitable for their respective parallelization paradigms. The distributed nature of MPI naturally lends itself to an evenly divided workload, while OpenMP's flexible scheduling options allow for adaptive load balancing in shared-memory environments.
 
 ## 3.6 Verification Test
-To ensure the correctness of the parallel K-means clustering solutions, a verification test was implemented to compare the resulting clusters with those from the sequential implementation, which serves as the reference case.
-
-The test reads the output data files from different parallel executions and compares the cluster assignments of each data point to the cluster assignments in the reference file. The assumption here is that while the exact centroids may differ due to the stochastic nature of the K-means algorithm, especially in parallel executions, the same set of points should still converge to the same clusters for a correct implementation.
+To ensure the correctness of the parallel K-means clustering solutions, a verification test was implemented to compare the resulting clusters with those from the sequential implementation, which serves as the reference case. The test reads the output data files from different parallel executions and compares the cluster assignments of each data point to the cluster assignments in the reference file. The assumption here is that while the exact centroids may differ due to the stochastic nature of the K-means algorithm, especially in parallel executions, the same set of points should still converge to the same clusters for a correct implementation.
 
 The verification test yielded the following observations:
 

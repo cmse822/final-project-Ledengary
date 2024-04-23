@@ -360,7 +360,7 @@ In the OpenMP implementation, dynamic scheduling is used to manage load balancin
 ```cpp
 #pragma omp parallel for schedule(dynamic)
 for (int i = 0; i < num_points; ++i) {
-    // ... Code for processing each point
+    // ... 
 }
 ```
 By using schedule(dynamic), the OpenMP runtime dynamically assigns iterations to threads, ensuring that all threads remain busy and contribute evenly to the computation. This results in better resource utilization and can lead to faster overall execution times.

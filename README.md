@@ -321,7 +321,6 @@ At 500,000 points, the efficiency of MPI in a distributed environment is highlig
 
 For the largest tested dataset of 5,000,000 points, MPI's distributed computing capabilities shine, achieving the best scalability and efficiency. OpenMP's performance also scales well, but the advantages of MPI's distributed memory model are apparent in handling large-scale data.
 
-## 3.4
 ## 3.4 Memory Usage Analysis
 
 Memory consumption is a crucial aspect of evaluating the performance of parallel computing paradigms. The following discussion focuses on the memory utilization observed during the execution of the K-means algorithm.
@@ -330,11 +329,15 @@ Memory consumption is a crucial aspect of evaluating the performance of parallel
 
 ![Maximum Resident Set Size Comparison](outputs/figures/max_resident_set_size_comparison_5k.png)
 
+![Maximum Resident Set Size Comparison](outputs/figures/max_resident_set_size_comparison_5M.png)
+
 The maximum resident set size is significantly higher for the MPI implementation compared to sequential and OpenMP. This is likely due to MPI's distributed nature, which involves storing a copy of the entire dataset and additional MPI-related control structures in the memory of each node. Despite the increased memory footprint, this allows MPI to achieve faster computation times, as observed in the performance analysis.
 
 ### 3.4.2 Peak Memory Footprints
 
 ![Peak Memory Footprints Comparison](outputs/figures/peak_memory_footprints_comparison_5k.png)
+
+![Peak Memory Footprints Comparison](outputs/figures/peak_memory_footprints_comparison_5M.png)
 
 The peak memory footprint follows a similar trend, with MPI showing the largest footprint. This is consistent with MPI's design to duplicate data across multiple nodes, allowing for parallel processing but at the cost of higher memory consumption per node. OpenMP shows a moderate increase in memory usage over sequential, which can be attributed to the overhead of maintaining multiple threads and their stacks.
 

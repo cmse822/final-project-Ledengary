@@ -1,5 +1,7 @@
 # CMSE 822 Final Project: K-Means Clustering
 
+![Cover Clusters](outputs/figures/cover-output.png)
+
 # 1. Introduction
 
 In the modern era of computational science, efficient processing of large datasets is crucial. This project focuses on the efficiency of parallel computing paradigms in handling intensive computational tasks, specifically K-means clustering. K-means is a fundamental algorithm widely used in data mining and machine learning to group a set of objects based on attributes into K distinct groups (clusters).

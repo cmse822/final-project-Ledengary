@@ -367,9 +367,35 @@ By using schedule(dynamic), the OpenMP runtime dynamically assigns iterations to
 
 Both MPI and OpenMP have their unique approaches to load balancing, suitable for their respective parallelization paradigms. The distributed nature of MPI naturally lends itself to an evenly divided workload, while OpenMP's flexible scheduling options allow for adaptive load balancing in shared-memory environments.
 
-## 3.6 Discussion
+## 3.6 Verification Test
+To ensure the correctness of the parallel K-means clustering solutions, a verification test was implemented to compare the resulting clusters with those from the sequential implementation, which serves as the reference case.
 
-#### 3.6.1 OpenMP Trends
+The test reads the output data files from different parallel executions and compares the cluster assignments of each data point to the cluster assignments in the reference file. The assumption here is that while the exact centroids may differ due to the stochastic nature of the K-means algorithm, especially in parallel executions, the same set of points should still converge to the same clusters for a correct implementation.
+
+The verification test yielded the following observations:
+
+- None of the parallel executions matched the reference parallel run with 8 threads, nor did they match the sequential run.
+- The discrepancy suggests that the data points are being assigned to different clusters, which may indicate a lack of consistency in the algorithm's parallel execution.
+
+There are several reasons why parallel K-means clustering results may not match the sequential results or even other parallel results:
+
+- Initialization of Centroids: If the centroids are initialized differently across runs, the clustering results can be different. This is particularly true if the initialization method depends on random seeds that aren't consistent across runs.
+
+- Order of Operations: In parallel computations, the order in which data points are processed can affect the final cluster assignments, especially if the centroid update is done asynchronously.
+
+- Floating-point Determinism: Parallel floating-point summations can produce different results due to non-associativity, leading to small variations that can amplify during the clustering process.
+
+- Concurrency Issues: If proper synchronization mechanisms are not used, there might be race conditions affecting the update of shared data structures, such as centroids in the OpenMP implementation.
+
+- Data Distribution: Even distribution of data points among processes is crucial for MPI. Any imbalance can cause divergences in the clustering results.
+
+- Algorithm Convergence: K-means is not guaranteed to find a global optimum, and the convergence to a local minimum may differ when the algorithm is parallelized.
+
+The lack of matching results between parallel and sequential runs is an expected outcome due to the inherent differences in the operation of parallel algorithms compared to their sequential counterparts. It highlights the need for careful consideration of parallelization effects on algorithmic determinism and reproducibility.
+
+## 3.7 Discussion
+
+#### 3.7.1 OpenMP Trends
 
 In the OpenMP implementation, increasing the number of threads up to a certain point results in a decrease in both total and average iteration times, demonstrating the expected performance improvement from parallelization. However, this decline in time is not consistent; at higher thread counts, the performance plateaus and, in some cases, even slightly increases. This could be due to a variety of factors including:
 
@@ -377,11 +403,11 @@ In the OpenMP implementation, increasing the number of threads up to a certain p
 - Memory bandwidth saturation: On shared-memory architectures, all threads compete for a finite amount of memory bandwidth. As more threads are added, the system may hit a bottleneck where memory cannot be supplied to threads quickly enough, leading to sub-optimal utilization of CPU resources.
 - Amdahl's Law: The principle that the speedup of a program from parallelization is limited by the time needed for the sequential fraction of the task, which means there is an upper limit to the benefit gained from adding more parallel execution units.
 
-#### 3.6.2 MPI Trends
+#### 3.7.2 MPI Trends
 
 The MPI implementation, conversely, displays a more consistent decline in computation times as the number of processes increases. This consistent performance improvement can be attributed to the distributed nature of the MPI paradigm where each process operates independently on a separate data subset, reducing memory contention and communication overhead between threads. The distributed memory model of MPI allows for more effective scaling as it is not constrained by the shared memory bandwidth.
 
-#### 3.6.3 Comparison Between MPI and OpenMP
+#### 3.7.3 Comparison Between MPI and OpenMP
 
 MPI consistently outperforms OpenMP across all scenarios for several reasons:
 
@@ -389,7 +415,7 @@ MPI consistently outperforms OpenMP across all scenarios for several reasons:
 - Scalability: MPI scales more efficiently across multiple nodes in a cluster, leveraging increased computational resources more effectively than OpenMP, which is confined to a single node.
 - Network Communication: MPI is designed for network communication between distributed processes and is optimized for passing messages efficiently, which is crucial for the reduce and broadcast operations in the K-means algorithm.
 
-#### 3.6.4 Sequential Performance
+#### 3.7.4 Sequential Performance
 
 Sequential execution remains consistently slower, approximately 5 times, than both MPI and OpenMP implementations. This substantial performance gap is a clear indicator of the limitations inherent in single-threaded processing for computationally intensive tasks. The inability to parallelize the workload in the sequential approach means it cannot utilize the additional computational resources that significantly boost the performance of MPI and OpenMP.
 

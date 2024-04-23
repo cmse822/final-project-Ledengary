@@ -3,6 +3,9 @@
         "iosfwd": "cpp",
         "vector": "cpp",
         "mpi-cluster.h": "c",
-        "math.h": "c"
+        "math.h": "c",
+        "__locale": "cpp",
+        "bitset": "cpp",
+        "locale": "cpp"
     }
 }

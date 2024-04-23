@@ -343,9 +343,30 @@ The peak memory footprint follows a similar trend, with MPI showing the largest 
 While MPI's memory usage is higher, it is important to consider memory efficiency — the amount of memory used relative to the speedup in computation time. Given MPI's superior performance in reducing total computation time, especially for larger datasets, the trade-off in memory usage may be justified when processing at scale. For applications with less stringent memory constraints and the need for high-speed computation, MPI's memory overhead is an acceptable compromise.
 
 
-## 3.5 Discussion
+## 3.5 Load Balancing
 
-#### 3.5.1 OpenMP Trends
+In this project, specific strategies were employed in both MPI and OpenMP implementations to address load balancing concerns.
+
+### 3.5.1 MPI Data Distribution
+
+For the MPI implementation, load balancing is managed by evenly distributing the data points across the available processes. The dataset is divided into nearly equal partitions, with each process responsible for its own subset of the data. This approach ensures that each process has an equal workload, with minor variations only when the total number of data points is not a multiple of the number of processes. The last process may receive a slightly larger subset to accommodate any remaining points, ensuring complete data coverage without significant load imbalance.
+
+### 3.5.2 OpenMP Dynamic Scheduling
+In the OpenMP implementation, dynamic scheduling is used to manage load balancing. Unlike static scheduling, where each thread receives a fixed set of iterations to process, dynamic scheduling allows threads to pull the next available iteration once they complete their current task. This is especially useful when the processing time for each iteration can vary, preventing threads from idling while others are still working. Here's an example from the code where dynamic scheduling is applied:
+
+```cpp
+#pragma omp parallel for schedule(dynamic)
+for (int i = 0; i < num_points; ++i) {
+    // ... Code for processing each point
+}
+```
+By using schedule(dynamic), the OpenMP runtime dynamically assigns iterations to threads, ensuring that all threads remain busy and contribute evenly to the computation. This results in better resource utilization and can lead to faster overall execution times.
+
+Both MPI and OpenMP have their unique approaches to load balancing, suitable for their respective parallelization paradigms. The distributed nature of MPI naturally lends itself to an evenly divided workload, while OpenMP's flexible scheduling options allow for adaptive load balancing in shared-memory environments.
+
+## 3.6 Discussion
+
+#### 3.6.1 OpenMP Trends
 
 In the OpenMP implementation, increasing the number of threads up to a certain point results in a decrease in both total and average iteration times, demonstrating the expected performance improvement from parallelization. However, this decline in time is not consistent; at higher thread counts, the performance plateaus and, in some cases, even slightly increases. This could be due to a variety of factors including:
 
@@ -353,11 +374,11 @@ In the OpenMP implementation, increasing the number of threads up to a certain p
 - Memory bandwidth saturation: On shared-memory architectures, all threads compete for a finite amount of memory bandwidth. As more threads are added, the system may hit a bottleneck where memory cannot be supplied to threads quickly enough, leading to sub-optimal utilization of CPU resources.
 - Amdahl's Law: The principle that the speedup of a program from parallelization is limited by the time needed for the sequential fraction of the task, which means there is an upper limit to the benefit gained from adding more parallel execution units.
 
-#### 3.5.2 MPI Trends
+#### 3.6.2 MPI Trends
 
 The MPI implementation, conversely, displays a more consistent decline in computation times as the number of processes increases. This consistent performance improvement can be attributed to the distributed nature of the MPI paradigm where each process operates independently on a separate data subset, reducing memory contention and communication overhead between threads. The distributed memory model of MPI allows for more effective scaling as it is not constrained by the shared memory bandwidth.
 
-#### 3.5.3 Comparison Between MPI and OpenMP
+#### 3.6.3 Comparison Between MPI and OpenMP
 
 MPI consistently outperforms OpenMP across all scenarios for several reasons:
 
@@ -365,7 +386,7 @@ MPI consistently outperforms OpenMP across all scenarios for several reasons:
 - Scalability: MPI scales more efficiently across multiple nodes in a cluster, leveraging increased computational resources more effectively than OpenMP, which is confined to a single node.
 - Network Communication: MPI is designed for network communication between distributed processes and is optimized for passing messages efficiently, which is crucial for the reduce and broadcast operations in the K-means algorithm.
 
-#### 3.5.4 Sequential Performance
+#### 3.6.4 Sequential Performance
 
 Sequential execution remains consistently slower, approximately 5 times, than both MPI and OpenMP implementations. This substantial performance gap is a clear indicator of the limitations inherent in single-threaded processing for computationally intensive tasks. The inability to parallelize the workload in the sequential approach means it cannot utilize the additional computational resources that significantly boost the performance of MPI and OpenMP.
 

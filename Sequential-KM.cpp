@@ -7,7 +7,7 @@
 #include "fstream"
 using namespace std;
 
-int number_of_dots = 5000;
+int number_of_dots = 5000000;
 int  number_of_clusters = 100;
 int iterations = 100;
 double max_value = 1000000;

@@ -7,10 +7,10 @@
 #include <math.h>
 #include <mpi.h>
 
-int number_of_dots = 5000000; // go to 5000
+int number_of_dots = 5000; // go to 5000
 int  number_of_clusters = 100;
 int max_iterations = 100;
-int number_of_processes = 1;
+int number_of_processes = 10;
 
 void clean(data_struct* data1);
 void print(data_struct* data2print);
